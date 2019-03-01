@@ -8,7 +8,7 @@
   			<div class="panel-heading">
     			<h2 class="panel-title"><?= UOJLocale::get('announcements') ?></h2>
   			</div>
-			<table class="table table-bordered table-hover table-fixed">
+			<table class="table table-fixed">
 				<thead>
 					<tr>
 						<th style="width:60%">标题</th>
@@ -35,7 +35,6 @@
 					<?php for ($i = $now_cnt + 1; $i <= 5; $i++): ?>
 						<tr><td colspan="233">&nbsp;</td></tr>
 					<?php endfor ?>
-						<tr><td class="text-right" colspan="233"><a href="/announcements"><button type="button" class="btn btn-primary"><?= UOJLocale::get('all the announcements') ?></button></a></td></tr>
 				</tbody>
 			</table>
 		</div>
@@ -45,14 +44,6 @@
   			<div class="panel-heading">
     			<h3 class="panel-title">链接</h3>
   			</div>
-			<ul class="list-group">
-				<a href="https://www.cnblogs.com/alessandro/" class="list-group-item">CYC大佬</a>
-				  <a href="https://blog.llf0703.com" class="list-group-item">Llf菜鸡</a>
-				  <a href="#" class="list-group-item">待添加</a>
-				  <a href="#" class="list-group-item">待添加</a>
-				  <a href="#" class="list-group-item">待添加</a>
-				  <a href="#" class="list-group-item">待添加</a>
-  			</ul>
 		</div>
 	</div>
 </div>

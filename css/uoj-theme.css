@@ -3,6 +3,10 @@ body {
 	padding:0;
 }
 
+td {
+	line-height:1.8 !important;
+}
+
 .uoj-content {
 	min-height: 250px;
 	margin: 8rem 5rem auto 5rem;
@@ -31,6 +35,43 @@ body {
 	color: gray;
 }
 
+ol {
+	font-size: 1.15em;
+}
+
+.nav-fixed {
+	background-color: #ffffff;
+	border-color: #ffffff;
+}
+
+.nav-fixed a {
+	border-top: 3px solid transparent;
+}
+
+.nav-border a:hover {
+	border-color: #5f9fd6 !important;
+}
+
+.nav-border:hover {
+	border-color: #5f9fd6 !important;
+}
+
+.nav-fixed li:hover {
+	background: #f8f8f8;
+}
+
+.nav-active {
+	border-color: #ed5f82 !important;
+}
+
+.panel {
+	border-radius: 0;
+}
+
+.panel:hover {
+	box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
+}
+
 a.header-a {
 	color: #333;
 }
@@ -55,7 +96,10 @@ article p {
 
 article h3 {
 	margin: 1.2em auto .6em auto;
-	font-weight: 600;
+}
+
+article h2,h3,h4,h5,h6 {
+	font-weight: bold;
 }
 
 .markdown-editor-out p {

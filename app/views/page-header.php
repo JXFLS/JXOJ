@@ -37,8 +37,8 @@
 		<?php if (isset($_GET['locale'])): ?>
 		<meta name="robots" content="noindex, nofollow" />
 		<?php endif ?>
-		<title><?= isset($PageTitle) ? $PageTitle : UOJConfig::$data['profile']['oj-name-short'] ?> - <?= $PageMainTitle ?></title>
-		
+		<title><?= isset($PageTitle)&&$PageTitle!="UOJ" ? $PageTitle : UOJConfig::$data['profile']['oj-name-short'] ?> - <?= $PageMainTitle ?></title>
+
 		<script type="text/javascript">uojHome = '<?= HTML::url('/') ?>'</script>
 
 		<!-- Bootstrap core CSS -->
