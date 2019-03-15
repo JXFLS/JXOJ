@@ -14,7 +14,7 @@
 				<li><a href="/problems"<?php if ($_SERVER['REQUEST_URI']=='/problems') echo"class=\"nav-active\"" ?>><?= UOJLocale::get('problems') ?></a></li>
 				<li><a href="/contests"<?php if ($_SERVER['REQUEST_URI']=='/contests') echo"class=\"nav-active\"" ?>><?= UOJLocale::get('contests') ?></a></li>
 				<li><a href="/submissions"<?php if ($_SERVER['REQUEST_URI']=='/submissions') echo"class=\"nav-active\"" ?>><?= UOJLocale::get('submissions') ?></a></li>
-				<li><a href="/hacks"<?php if ($_SERVER['REQUEST_URI']=='/hacks') echo"class=\"nav-active\"" ?>><?= UOJLocale::get('hacks') ?></a></li>
+				<li><a href="/ranklist"<?php if ($_SERVER['REQUEST_URI']=='/ranklist') echo"class=\"nav-active\"" ?>>排名</a></li>
 				<li><a href="/blogs"<?php if ($_SERVER['REQUEST_URI']=='/blogs') echo"class=\"nav-active\"" ?>><?= UOJLocale::get('blogs') ?></a></li>
 				<li><a href="/faq"<?php if ($_SERVER['REQUEST_URI']=='/faq') echo"class=\"nav-active\"" ?>><?= UOJLocale::get('help') ?></a></li>
 			</ul>

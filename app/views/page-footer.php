@@ -34,7 +34,7 @@
 						<a href="/faq"> 帮助 </a> | <a href="#"> 社区规则 </a> | <a href="#"> 关于JXOJ </a>
 					</p>
 					<p> 
-						Developed by AlessandroChen,Terrasse and Llf0703 in <a href="#" target="_blank"> JXOJ Team </a>
+						Developed by AlessandroChen,Terrasse and Llf0703 in <a href="https://github.com/JXFLS" target="_blank"> JXOJ Team </a>
 					</p>
 					<p>
 						Based on <a href="https://github.com/vfleaking/uoj" target="_blank"> Universal Online Judge </a> & <a href="http://github.com/UniversalOJ/UOJ-System" target="_blank"> UOJ Community </a>
@@ -45,7 +45,7 @@
 					<p>
 						Master: 香港記者號
 					</p>
-					<div class="dropup">
+					<!--<div class="dropup">
 						<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 					    	语言
 					    	<span class="caret"></span>
@@ -54,7 +54,7 @@
 					  		<li><a href="<?= HTML::url(UOJContext::requestURI(), array('params' => array('locale' => 'zh-cn'))) ?>">中文</a></li>
 							<li><a href="<?= HTML::url(UOJContext::requestURI(), array('params' => array('locale' => 'en'))) ?>">English</a></li>
 					  	</ul>
-					</div>
+					</div>-->
 				</div>
 			</div>
 			<?php endif ?>

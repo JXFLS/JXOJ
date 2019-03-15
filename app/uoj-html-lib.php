@@ -170,6 +170,45 @@ function echoLongTable($col_names, $table_name, $cond, $tail, $header_row, $prin
 	echo $pag->pagination();
 }
 
+function echoLongTableForRank($col_names, $table_name, $cond, $tail, $header_row, $print_row, $config) {
+	$pag_config = $config;
+	$pag_config['col_names'] = $col_names;
+	$pag_config['table_name'] = $table_name;
+	$pag_config['cond'] = $cond;
+	$pag_config['tail'] = $tail;
+	$pag = new Paginator($pag_config);
+
+	$div_classes = isset($config['div_classes']) ? $config['div_classes'] : array('table-responsive');
+	$table_classes = isset($config['table_classes']) ? $config['table_classes'] : array('table', 'table-bordered', 'table-hover', 'table-striped', 'table-text-center');
+		
+	echo '<table class="table table-fixed">';
+	echo '<thead>';
+	echo $header_row;
+	echo '</thead>';
+	echo '<tbody>';
+
+	foreach ($pag->get() as $idx => $row) {
+		if (isset($config['get_row_index'])) {
+			$print_row($row, $idx);
+		} else {
+			$print_row($row);
+		}
+	}
+	if ($pag->isEmpty()) {
+		echo '<tr><td colspan="233">'.UOJLocale::get('none').'</td></tr>';
+	}
+
+	echo '</tbody>';
+	echo '</table>';
+	
+	if (isset($config['print_after_table'])) {
+		$fun = $config['print_after_table'];
+		$fun();
+	}
+		
+	echo $pag->pagination();
+}
+
 function getSubmissionStatusDetails($submission) {
 	$html = '<td colspan="233" style="vertical-align: middle">';
 	
@@ -954,5 +993,5 @@ function echoRanklist($config = array()) {
 	}
 	
 	$config['get_row_index'] = '';
-	echoLongTable($col_names, 'user_info', '1', $tail, $header_row, $print_row, $config);
+	echoLongTableForRank($col_names, 'user_info', '1', $tail, $header_row, $print_row, $config);
 }
