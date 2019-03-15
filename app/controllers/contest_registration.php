@@ -7,7 +7,7 @@
 	
 	if ($myUser == null) {
 		redirectToLogin();
-	} elseif (hasContestPermission($myUser, $contest) || hasRegistered($myUser, $contest) || $contest['cur_progress'] != CONTEST_NOT_STARTED) {
+	} elseif (hasContestPermission($myUser, $contest)) {
 		redirectTo('/contests');
 	}
 	
@@ -19,7 +19,11 @@
 	};
 	$register_form->submit_button_config['class_str'] = 'btn btn-primary';
 	$register_form->submit_button_config['text'] = '报名比赛';
-	$register_form->succ_href = "/contests";
+	if ($contest['cur_progress'] == CONTEST_NOT_STARTED) {
+		$register_form->succ_href = "/contests";
+	} elseif ($contest['cur_progress'] == CONTEST_IN_PROGRESS) {
+		$register_form->succ_href = "/contest/".$contest['id'];
+	}
 	
 	$register_form->runAtServer();
 ?>
