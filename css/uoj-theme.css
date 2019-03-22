@@ -2,6 +2,10 @@ body {
 	margin:0;
 	padding:0;
 	font-family: 'Roboto', sans-serif !important;
+	position: relative;
+	width: 100%;
+	min-height: 100vh;
+	padding-bottom: 20em;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -63,6 +67,11 @@ td {
 	color: white;
 	background-color: #273547;
 	border-top: 1px solid #e5e5e5;
+	height: 20em;
+    	position: absolute;
+    	bottom: 0;
+    	width: 100%;
+}
 }
 .uoj-footer a {
 	color: gray;
