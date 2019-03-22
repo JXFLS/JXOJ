@@ -1,15 +1,48 @@
 body {
 	margin:0;
 	padding:0;
+	font-family: 'Roboto', sans-serif !important;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-family: 'Roboto', sans-serif !important;
 }
 
 td {
 	line-height:1.8 !important;
 }
 
-.uoj-content {
-	min-height: 250px;
-	margin: 8rem 5rem auto 5rem;
+@media only screen and (max-width:768px) {
+	.uoj-content {
+		min-height: 100%;
+		margin: 8rem 2rem auto 2rem;
+	}
+}
+
+@media only screen and (min-width:768px) {
+	.uoj-content {
+		min-height: 100%;
+		margin: 8rem 8rem auto 8rem;
+	}
+}
+
+@media only screen and (max-width:768px) {
+	.nav-content {
+		margin: 0 2rem auto 2rem;
+	}
+}
+
+@media only screen and (min-width:768px) {
+	.nav-content {
+		margin: 0 8rem auto 8rem;
+	}
+	.navbar-header {
+		margin-left:-15px;
+	}
+}
+
+.nav-pills {
+	margin-top:2em;
 }
 
 .uoj-header {
@@ -35,10 +68,6 @@ td {
 	color: gray;
 }
 
-ol {
-	font-size: 1.15em;
-}
-
 .nav-fixed {
 	background-color: #ffffff;
 	border-color: #ffffff;
@@ -62,6 +91,14 @@ ol {
 
 .nav-active {
 	border-color: #ed5f82 !important;
+}
+
+.navbar-brand img {
+	height:25px;
+}
+
+.navbar-brand {
+	border-top:0 !important;
 }
 
 .panel {
@@ -108,8 +145,9 @@ article h2,h3,h4,h5,h6 {
 }
 
 article img {
-	vertical-align: baseline;
 	max-width: 800px;
+	margin: 0 auto;
+	display: block;
 }
 
 pre {

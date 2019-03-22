@@ -207,17 +207,17 @@ EOD
 	$REQUIRE_LIB['shjs'] = '';
 ?>
 <?php echoUOJPageHeader(HTML::stripTags($problem['title']) . ' - ' . UOJLocale::get('problems::problem')) ?>
-<div class="pull-right">
+<!--<div class="pull-right">
 	<?= getClickZanBlock('P', $problem['id'], $problem['zan']) ?>
-</div>
+</div>-->
 
 <?php if ($contest): ?>
-<div class="page-header row">
+<div class="row">
 	<h1 class="col-md-3 text-left"><small><?= $contest['name'] ?></small></h1>
 	<h1 class="col-md-7 text-center"><?= $problem_letter ?>. <?= $problem['title'] ?></h1>
 	<div class="col-md-2 text-right" id="contest-countdown"></div>
 </div>
-<a role="button" class="btn btn-info pull-right" href="/contest/<?= $contest['id'] ?>/problem/<?= $problem['id'] ?>/statistics"><span class="glyphicon glyphicon-stats"></span> <?= UOJLocale::get('problems::statistics') ?></a>
+<!--<a role="button" class="btn btn-info pull-right" href="/contest/<?= $contest['id'] ?>/problem/<?= $problem['id'] ?>/statistics"><span class="glyphicon glyphicon-stats"></span> <?= UOJLocale::get('problems::statistics') ?></a>-->
 <?php if ($contest['cur_progress'] <= CONTEST_IN_PROGRESS): ?>
 <script type="text/javascript">
 checkContestNotice(<?= $contest['id'] ?>, '<?= UOJTime::$time_now_str ?>');
@@ -225,21 +225,63 @@ $('#contest-countdown').countdown(<?= $contest['end_time']->getTimestamp() - UOJ
 </script>
 <?php endif ?>
 <?php else: ?>
-<h1 class="page-header text-center">#<?= $problem['id']?>. <?= $problem['title'] ?></h1>
-<a role="button" class="btn btn-info pull-right" href="/problem/<?= $problem['id'] ?>/statistics"><span class="glyphicon glyphicon-stats"></span> <?= UOJLocale::get('problems::statistics') ?></a>
+<h1 class="text-center">#<?= $problem['id']?>. <?= $problem['title'] ?></h1>
+<!--<a role="button" class="btn btn-info pull-right" href="/problem/<?= $problem['id'] ?>/statistics"><span class="glyphicon glyphicon-stats"></span> <?= UOJLocale::get('problems::statistics') ?></a>-->
 <?php endif ?>
 
-<ul class="nav nav-tabs" role="tablist">
+<?php
+    $limit = getUOJConf("/var/uoj_data/{$problem['id']}/problem.conf");
+    $time_limit = $limit['time_limit'];
+	$memory_limit = $limit['memory_limit'];
+	$output_limit = $limit['output_limit'];
+	$tests = $limit['n_tests'];
+	$ex_tests = $limit['n_ex_tests'];
+	$checker = $limit['use_builtin_checker'];
+?>
+<div class="row text-center">
+    <?php if($time_limit != null ): ?>
+	    <span class="label label-default">时间限制：<?=$time_limit?> s</span>
+	<?php else: ?>
+	    <span class="label label-default">时间限制：N/A</span>
+	<?php endif ?>
+    <?php if($memory_limit != null ): ?>
+	    <span class="label label-default">内存限制：<?=$memory_limit?> MiB</span>
+	<?php else: ?>
+	    <span class="label label-default">内存限制：N/A</span>
+	<?php endif ?>
+	<?php if($output_limit != null ): ?>
+	    <span class="label label-default">输出限制：<?=$output_limit?> MiB</span>
+	<?php else: ?>
+	    <span class="label label-default">输出限制：N/A</span>
+	<?php endif ?>
+</div>
+
+<div class="row text-center" style="margin-top:0.5em;">
+<span class="label label-default">测试点个数：<?=$tests?> 个</span>
+	<span class="label label-default">附加测试点个数：<?=$ex_tests?> 个</span>
+	<?php if($checker != null ): ?>
+	<span class="label label-default">数据检查器：<?=$checker?></span>
+	<?php else: ?>
+	<span class="label label-default">数据检查器：自定义</span>
+	<?php endif ?>
+</div>
+
+<ul class="nav nav-pills" role="tablist" id="tabs">
 	<li class="active"><a href="#tab-statement" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-book"></span> <?= UOJLocale::get('problems::statement') ?></a></li>
 	<li><a href="#tab-submit-answer" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-upload"></span> <?= UOJLocale::get('problems::submit') ?></a></li>
 	<?php if ($custom_test_requirement): ?>
 	<li><a href="#tab-custom-test" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-console"></span> <?= UOJLocale::get('problems::custom test') ?></a></li>
 	<?php endif ?>
+	<?php if ($contest){ ?>
+	<li><a href="/contest/<?= $contest['id'] ?>/problem/<?= $problem['id'] ?>/statistics" role="tab"><span class="glyphicon glyphicon-stats"></span> <?= UOJLocale::get('problems::statistics') ?></a></li>
+	<li><a href="/contest/<?= $contest['id'] ?>" role="tab"><span class="glyphicon glyphicon-chevron-left"></span> <?= UOJLocale::get('contests::back to the contest') ?></a></li>
+	<?php } else { ?>
+	<li><a href="/problem/<?= $problem['id'] ?>/statistics" role="tab"><span class="glyphicon glyphicon-stats"></span> <?= UOJLocale::get('problems::statistics') ?></a></li>
+	<?php } ?>
 	<?php if (hasProblemPermission($myUser, $problem)): ?>
-	<li><a href="/problem/<?= $problem['id'] ?>/manage/statement" role="tab"><?= UOJLocale::get('problems::manage') ?></a></li>
-	<?php endif ?>
-	<?php if ($contest): ?>
-	<li><a href="/contest/<?= $contest['id'] ?>" role="tab"><?= UOJLocale::get('contests::back to the contest') ?></a></li>
+	<li><a href="/problem/<?= $problem['id'] ?>/manage/statement" role="tab"><span class="glyphicon glyphicon-edit"></span> <?= UOJLocale::get('problems::manage') ?></a></li>
+	<?php else: ?>
+	<li class="disabled"><a href="#" role="tab"><span class="glyphicon glyphicon-edit"></span> <?= UOJLocale::get('problems::manage') ?></a></li>
 	<?php endif ?>
 </ul>
 <div class="tab-content">
@@ -263,3 +305,23 @@ $('#contest-countdown').countdown(<?= $contest['end_time']->getTimestamp() - UOJ
 	<?php endif ?>
 </div>
 <?php echoUOJPageFooter() ?>
+
+<script>
+    $(function(){
+        $(window).scroll(function() {
+            if($(window).scrollTop() >= 200) {
+                $("#header-content").html("<p class=\"navbar-text\" style=\"margin-top:18px;\">#<?= $problem['id']?>. <?= $problem['title'] ?></p> <li><a id=\"a-submit\" href=\"#tab-submit-answer\"><span class=\"glyphicon glyphicon-upload\"></span> <?= UOJLocale::get('problems::submit') ?></a></li><li><a id=\"a-test\" href=\"#tab-custom-test\"><span class=\"glyphicon glyphicon-console\"></span> <?= UOJLocale::get('problems::custom test') ?></a></li><?php if ($contest): ?><li><a href=\"/contest/<?= $contest['id'] ?>\"><span class=\"glyphicon glyphicon-chevron-left\"></span> <?= UOJLocale::get('contests::back to the contest') ?></a></li><?php endif ?><li><a href=\"<?= HTML::url('/') ?>\"><span class=\"glyphicon glyphicon-home\"></span></a></li><li><a href=\"/problems\"><span class=\"glyphicon glyphicon-list\"></span></a></li><li><a href=\"/contests\"><span class=\"glyphicon glyphicon-calendar\"></span></a></li><li><a href=\"/submissions\"><span class=\"glyphicon glyphicon-tasks\"></span></a></li><li><a href=\"/ranklist\"><span class=\"glyphicon glyphicon-signal\"></span></a></li><li><a href=\"/blogs\"><span class=\"glyphicon glyphicon-globe\"></span></a></li>");
+				$('#a-submit').click(function () {
+					$('#tabs li:eq(1) a').tab('show')
+				})
+				$('#a-test').click(function () {
+					$('#tabs li:eq(2) a').tab('show')
+				})
+			}
+			else {
+				$("#header-content").html("<li><a href=\"<?= HTML::url('/') ?>\"><span class=\"glyphicon glyphicon-home\"></span> 首页</a></li><li><a href=\"/problems\"><span class=\"glyphicon glyphicon-list\"></span> <?= UOJLocale::get('problems') ?></a></li><li><a href=\"/contests\"><span class=\"glyphicon glyphicon-calendar\"></span> <?= UOJLocale::get('contests') ?></a></li><li><a href=\"/submissions\"><span class=\"glyphicon glyphicon-tasks\"></span> 评测</a></li><li><a href=\"/ranklist\"><span class=\"glyphicon glyphicon-signal\"></span> 排名</a></li><li><a href=\"/blogs\"><span class=\"glyphicon glyphicon-globe\"></span> <?= UOJLocale::get('blogs') ?></a></li>");
+			}
+        })
+    }
+ );
+</script>

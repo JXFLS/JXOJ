@@ -83,7 +83,7 @@
 		<?= HTML::js_src('/js/LAB.min.js') ?>
 
 		<!-- UOJ ico -->
-		<link rel="shortcut icon" href="<?= HTML::url('/pictures/UOJ.ico') ?>" />
+		<link rel="shortcut icon" href="<?= HTML::url('/pictures/jxoj-logo.png') ?>" />
 		
 		<?php if (isset($REQUIRE_LIB['blog-editor'])): ?>
 		<!-- UOJ blog editor -->
@@ -217,6 +217,7 @@
 		<?php if (UOJConfig::$data['switch']['web-analytics']): ?>
 		<script>var _hmt = _hmt || [];(function() {var hm = document.createElement("script");hm.src = "//hm.baidu.com/hm.js?bbd5ae87bf89e087603a1988103688ff";var s = document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm, s);})();</script>
 		<?php endif ?>
+		<link href="https://fonts.proxy.ustclug.org/css?family=Roboto" rel="stylesheet"> 
 	</head>
 	<body role="document">
 		<?php uojIncludeView($PageNav) ?>

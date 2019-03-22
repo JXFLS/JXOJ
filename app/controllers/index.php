@@ -131,6 +131,36 @@ EOD;
     			</div>
   			</div>
 		</div>
+
+        <div class="panel panel-default">
+  			<div class="panel-heading">
+    			<h3 class="panel-title"><span class="glyphicon glyphicon-link" aria-hidden="true"></span> 链接</h3>
+  			</div>
+			<div class="panel-body">
+                <p>
+                    <h5>JXOJ项目</h5>
+                    <a href="https://github.com/JXFLS/JXOJ-Frontend" target="_blank">JXOJ前端页面</a>
+                    &nbsp;|&nbsp;
+                    <a href="https://github.com/Llf0703/Anti-Cheating" target="_blank">反作弊系统</a>
+                    <br>
+                </p>
+                <p>
+                    <h5>OIer博客 <small>排名不分先后</small></h5>
+                    <a href="https://www.cnblogs.com/alessandro/" target="_blank">AlessandroChen</a>
+                    &nbsp;|&nbsp;
+                    <a href="https://llf0703.com/" target="_blank">Llf0703</a>
+                    &nbsp;|&nbsp;
+                    <a href="https://sshwy.gitee.io/" target="_blank">sshwy</a>
+                    &nbsp;|&nbsp;
+                    <a href="https://www.cnblogs.com/terrasse" target="_blank">Terrasse</a>
+                    &nbsp;|&nbsp;
+                    <a href="https://www.cnblogs.com/pelom" target="_blank">Pelom</a>
+                    &nbsp;|&nbsp;
+                    <a href="https://www.cnblogs.com/ofnoname" target="_blank">Ofnoname</a>
+                    <br>
+                </p>
+  			</div>
+		</div>
 	</div>
 </div>
 
