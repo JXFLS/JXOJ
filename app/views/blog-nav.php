@@ -13,8 +13,11 @@
 			<ul class="nav navbar-nav">
 				<li><a href="<?= HTML::blog_url(UOJContext::userid(), '/archive')?>">日志</a></li>
 				<li><a href="<?= HTML::blog_url(UOJContext::userid(), '/aboutme')?>">关于我</a></li>
-				<li><a href="<?= HTML::url('/') ?>">UOJ</a></li>
+				<li><a href="<?= HTML::url('/') ?>"><?= UOJConfig::$data['profile']['oj-name-short'] ?></a></li>
 			</ul>
 		</div><!--/.nav-collapse -->
 	</div>
 </div>
+<script type="text/javascript">
+	var uojBlogUrl = '<?= HTML::blog_url(UOJContext::userid(), '')?>';
+</script>

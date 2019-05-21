@@ -1,10 +1,10 @@
 <?php
 	$blogs = DB::selectAll("select blogs.id, title, poster, post_time from important_blogs, blogs where is_hidden = 0 and important_blogs.blog_id = blogs.id order by level desc, important_blogs.blog_id desc limit 5");
 ?>
-<?php echoUOJPageHeader('UOJ') ?>
+<?php echoUOJPageHeader(UOJConfig::$data['profile']['oj-name-short']) ?>
 <div class="row">
 	<div class="col-sm-12 col-md-8">
-		<div class="panel panel-default">
+		<div class="panel panel-default mdui-hoverable">
   			<div class="panel-heading">
     			<h3 class="panel-title"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> <?= UOJLocale::get('announcements') ?></h3>
   			</div>
@@ -31,14 +31,11 @@
 							<td><?= getUserLink($blog['poster']) ?></td>
 							<td><small><?= $blog['post_time'] ?></small></td>
 						</tr>
-					<?php endforeach ?>
-					<!--<?php for ($i = $now_cnt + 1; $i <= 5; $i++): ?>
-						<tr><td colspan="233">&nbsp;</td></tr>
-					<?php endfor ?>-->
+					<?php endforeach;?>
 				</tbody>
 			</table>
 		</div>
-		<div class="panel panel-default">
+		<div class="panel panel-default mdui-hoverable">
   			<div class="panel-heading">
 				<h3 class="panel-title"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span> <?= UOJLocale::get('top rated') ?></h3>
 			</div>
@@ -46,7 +43,7 @@
 		</div>
 	</div>
 	<div class="col-sm-12 col-md-4">
-		<div class="panel panel-default">
+		<div class="panel panel-default mdui-hoverable">
   			<div class="panel-heading">
     			<h3 class="panel-title"><span class="glyphicon glyphicon-heart" aria-hidden="true"></span> 一言（ヒトコト）</h3>
   			</div>
@@ -55,7 +52,7 @@
 			<div id="hitokoto-from"></div>
   			</div>
 		</div>
-		<div class="panel panel-default">
+		<div class="panel panel-default mdui-hoverable">
   			<div class="panel-heading">
     			<h3 class="panel-title"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> 近期比赛</h3>
   			</div>
@@ -118,21 +115,22 @@ EOD;
 	}
 ?>
 		</div>
-		<div class="panel panel-default">
+
+		<div class="panel panel-default mdui-hoverable">
   			<div class="panel-heading">
     			<h3 class="panel-title"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> 搜索</h3>
   			</div>
 			<div class="panel-body">
 				<div class="input-group">
-      				<input type="text" class="form-control" placeholder="搜索题目（正在咕咕）">
+      				<input type="text" class="form-control" id="search-index" placeholder="搜索题目"/>
       				<span class="input-group-btn">
-        				<button class="btn btn-default" type="button">搜索</button>
+        				<button class="btn btn-default" type="submit" onclick="search()">搜索</button>
       				</span>
     			</div>
   			</div>
 		</div>
 
-        <div class="panel panel-default">
+        <div class="panel panel-default mdui-hoverable">
   			<div class="panel-heading">
     			<h3 class="panel-title"><span class="glyphicon glyphicon-link" aria-hidden="true"></span> 链接</h3>
   			</div>
@@ -150,7 +148,7 @@ EOD;
                     &nbsp;|&nbsp;
                     <a href="https://llf0703.com/" target="_blank">Llf0703</a>
                     &nbsp;|&nbsp;
-                    <a href="https://sshwy.gitee.io/" target="_blank">sshwy</a>
+                    <a href="https://sshwy.tk/" target="_blank">sshwy</a>
                     &nbsp;|&nbsp;
                     <a href="https://www.cnblogs.com/terrasse" target="_blank">Terrasse</a>
                     &nbsp;|&nbsp;
@@ -165,6 +163,12 @@ EOD;
 </div>
 
 <?php echoUOJPageFooter() ?>
+
+<script>
+	function search() {
+		$(location).attr('href', '/problems?search='+$('#search-index').val());
+	}
+</script>
 
 <script>
     $.get('https://v1.hitokoto.cn/?c=a', function (data) {

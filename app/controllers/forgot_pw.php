@@ -25,10 +25,12 @@
 		$url = HTML::url("/reset-password", array('params' => array('p' => $sufs)));
 		$html = <<<EOD
 <base target="_blank" />
+
 <p>{$user['username']}您好，</p>
 <p>您刚刚启用了{$oj_name_short}密码找回功能，请进入下面的链接重设您的密码：</p>
 <p><a href="$url">$url</a></p>
 <p>{$oj_name}</p>
+
 <style type="text/css">
 body{font-size:14px;font-family:arial,verdana,sans-serif;line-height:1.666;padding:0;margin:0;overflow:auto;white-space:normal;word-wrap:break-word;min-height:100px}
 pre {white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word}

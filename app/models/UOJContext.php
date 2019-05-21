@@ -21,6 +21,13 @@ class UOJContext {
 		return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 	}
 	
+	public static function contentLength() {
+		if (!isset($_SERVER['CONTENT_LENGTH'])) {
+			return null;
+		}
+		return (int)$_SERVER['CONTENT_LENGTH'];
+	}
+	
 	public static function documentRoot() {
 		return $_SERVER['DOCUMENT_ROOT'];
 	}
@@ -46,13 +53,20 @@ class UOJContext {
 		return $_SERVER['REQUEST_METHOD'];
 	}
 	public static function httpHost() {
-		return isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
+		if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+			return $_SERVER['HTTP_X_FORWARDED_HOST'];
+		} else if (isset($_SERVER['HTTP_HOST'])) {
+			return $_SERVER['HTTP_HOST'];
+		} else {
+			return $_SERVER['SERVER_NAME'].($_SERVER['SERVER_PORT'] == '80' ? '' : ':'.$_SERVER['SERVER_PORT']);
+		}
 	}
 	public static function cookieDomain() {
 		$domain = UOJConfig::$data['web']['domain'];
 		if ($domain === null) {
 			$domain = UOJConfig::$data['web']['main']['host'];
 		}
+		$domain = array_shift(explode(':', $domain));
 		if (validateIP($domain)) {
 			$domain = '';
 		} else {

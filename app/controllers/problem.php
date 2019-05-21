@@ -110,9 +110,9 @@
 		$result_json = json_encode($result);
 		
 		if ($is_in_contest) {
-			mysql_query("insert into submissions (problem_id, contest_id, submit_time, submitter, content, language, tot_size, status, result, is_hidden) values (${problem['id']}, ${contest['id']}, now(), '${myUser['username']}', '$esc_content', '$esc_language', $tot_size, '${result['status']}', '$result_json', 0)");
+			DB::query("insert into submissions (problem_id, contest_id, submit_time, submitter, content, language, tot_size, status, result, is_hidden) values (${problem['id']}, ${contest['id']}, now(), '${myUser['username']}', '$esc_content', '$esc_language', $tot_size, '${result['status']}', '$result_json', 0)");
 		} else {
-			mysql_query("insert into submissions (problem_id, submit_time, submitter, content, language, tot_size, status, result, is_hidden) values (${problem['id']}, now(), '${myUser['username']}', '$esc_content', '$esc_language', $tot_size, '${result['status']}', '$result_json', {$problem['is_hidden']})");
+			DB::query("insert into submissions (problem_id, submit_time, submitter, content, language, tot_size, status, result, is_hidden) values (${problem['id']}, now(), '${myUser['username']}', '$esc_content', '$esc_language', $tot_size, '${result['status']}', '$result_json', {$problem['is_hidden']})");
 		}
  	}
 	function handleCustomTestUpload($zip_file_name, $content, $tot_size) {
@@ -233,10 +233,11 @@ $('#contest-countdown').countdown(<?= $contest['end_time']->getTimestamp() - UOJ
     $limit = getUOJConf("/var/uoj_data/{$problem['id']}/problem.conf");
     $time_limit = $limit['time_limit'];
 	$memory_limit = $limit['memory_limit'];
-	$output_limit = $limit['output_limit'];
 	$tests = $limit['n_tests'];
 	$ex_tests = $limit['n_ex_tests'];
 	$checker = $limit['use_builtin_checker'];
+	$uper = $limit['uper'];
+	$extra = $limit['extra'];
 ?>
 <div class="row text-center">
     <?php if($time_limit != null ): ?>
@@ -249,21 +250,32 @@ $('#contest-countdown').countdown(<?= $contest['end_time']->getTimestamp() - UOJ
 	<?php else: ?>
 	    <span class="label label-default">内存限制：N/A</span>
 	<?php endif ?>
-	<?php if($output_limit != null ): ?>
-	    <span class="label label-default">输出限制：<?=$output_limit?> MiB</span>
+	<?php if($checker != null ): ?>
+	<span class="label label-default">检查器：<?=$checker?></span>
 	<?php else: ?>
-	    <span class="label label-default">输出限制：N/A</span>
+	<span class="label label-default">检查器：自定义</span>
 	<?php endif ?>
 </div>
 
 <div class="row text-center" style="margin-top:0.5em;">
-<span class="label label-default">测试点个数：<?=$tests?> 个</span>
-	<span class="label label-default">附加测试点个数：<?=$ex_tests?> 个</span>
-	<?php if($checker != null ): ?>
-	<span class="label label-default">数据检查器：<?=$checker?></span>
+	<?php if($tests != null ): ?>
+	<span class="label label-default">测试点：<?=$tests?> 个</span>
 	<?php else: ?>
-	<span class="label label-default">数据检查器：自定义</span>
-	<?php endif ?>
+	<span class="label label-default">测试点：N/A</span>
+	<?php endif; ?>
+	<?php if($ex_tests != null ): ?>
+	<span class="label label-default">附加测试点：<?=$ex_tests?> 个</span>
+	<?php else: ?>
+	<span class="label label-default">附加测试点：N/A</span>
+	<?php endif; ?>
+</div>
+
+<div class="row text-center" style="margin-top:0.5em;">
+	<?php if($uper != null ): ?>
+	<span class="label label-default">上传者：<?=$uper?></span>
+	<?php else: ?>
+	<span class="label label-default">上传者：匿名</span>
+	<?php endif; ?>
 </div>
 
 <ul class="nav nav-pills" role="tablist" id="tabs">
@@ -271,6 +283,10 @@ $('#contest-countdown').countdown(<?= $contest['end_time']->getTimestamp() - UOJ
 	<li><a href="#tab-submit-answer" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-upload"></span> <?= UOJLocale::get('problems::submit') ?></a></li>
 	<?php if ($custom_test_requirement): ?>
 	<li><a href="#tab-custom-test" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-console"></span> <?= UOJLocale::get('problems::custom test') ?></a></li>
+	<?php endif ?>
+	<li><a href="/problem/<?= $problem['id'] ?>/sol"><span class="glyphicon glyphicon-eye-open"></span> 题解</a></li>
+	<?php if ($extra != null): ?>
+	<li><a href="<?=$extra?>" target="_blank"><span class="glyphicon glyphicon-download-alt"></span> 附加文件</a></li>
 	<?php endif ?>
 	<?php if ($contest){ ?>
 	<li><a href="/contest/<?= $contest['id'] ?>/problem/<?= $problem['id'] ?>/statistics" role="tab"><span class="glyphicon glyphicon-stats"></span> <?= UOJLocale::get('problems::statistics') ?></a></li>
@@ -310,7 +326,10 @@ $('#contest-countdown').countdown(<?= $contest['end_time']->getTimestamp() - UOJ
     $(function(){
         $(window).scroll(function() {
             if($(window).scrollTop() >= 200) {
-                $("#header-content").html("<li><a href=\"#\">#<?= $problem['id']?>. <?= $problem['title'] ?></a></li><li><a id=\"a-submit\" href=\"#tab-submit-answer\"><span class=\"glyphicon glyphicon-upload\"></span> <?= UOJLocale::get('problems::submit') ?></a></li><li><a id=\"a-test\" href=\"#tab-custom-test\"><span class=\"glyphicon glyphicon-console\"></span> <?= UOJLocale::get('problems::custom test') ?></a></li><?php if ($contest): ?><li><a href=\"/contest/<?= $contest['id'] ?>\"><span class=\"glyphicon glyphicon-chevron-left\"></span> <?= UOJLocale::get('contests::back to the contest') ?></a></li><?php endif ?>");
+                $("#header-content").html("<li><a id=\"a-overview\" href=\"#\">#<?= $problem['id']?>. <?= $problem['title'] ?></a></li><li><a id=\"a-submit\" href=\"#\"><span class=\"glyphicon glyphicon-upload\"></span> <?= UOJLocale::get('problems::submit') ?></a></li><li><a id=\"a-test\" href=\"#\"><span class=\"glyphicon glyphicon-console\"></span> <?= UOJLocale::get('problems::custom test') ?></a></li><?php if ($contest): ?><li><a href=\"/contest/<?= $contest['id'] ?>\"><span class=\"glyphicon glyphicon-chevron-left\"></span> <?= UOJLocale::get('contests::back to the contest') ?></a></li><?php endif ?>");
+				$('#a-overview').click(function () {
+					$('#tabs li:eq(0) a').tab('show')
+				})
 				$('#a-submit').click(function () {
 					$('#tabs li:eq(1) a').tab('show')
 				})

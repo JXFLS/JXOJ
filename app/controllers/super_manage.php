@@ -20,9 +20,9 @@
 		null
 	);
 	$options = array(
-		'ban' => '封禁',
-		'deblocking' => '解封',
-		'login' => '登录'
+		'banneduser' => '设为封禁用户',
+		'normaluser' => '设为普通用户',
+		'superuser' => '设为超级用户'
 	);
 	$user_form->addSelect('op-type', $options, '操作类型', '');
 	$user_form->handle = function() {
@@ -30,15 +30,14 @@
 		
 		$username = $_POST['username'];
 		switch ($_POST['op-type']) {
-			case 'ban':
+			case 'banneduser':
 				DB::update("update user_info set usergroup = 'B' where username = '{$username}'");
 				break;
-			case 'deblocking':
+			case 'normaluser':
 				DB::update("update user_info set usergroup = 'U' where username = '{$username}'");
 				break;
-			case 'login':
-				Auth::login($username);
-				$user_form->succ_href = "/";
+			case 'superuser':
+				DB::update("update user_info set usergroup = 'S' where username = '{$username}'");
 				break;
 		}
 	};
@@ -75,7 +74,7 @@
 	$blog_link_contests->handle = function() {
 		$blog_id = $_POST['blog_id'];
 		$contest_id = $_POST['contest_id'];
-		$str = mysql_fetch_array(mysql_query("select * from contests where id='${contest_id}'"));
+		$str = DB::selectFirst(("select * from contests where id='${contest_id}'"));
 		$all_config = json_decode($str['extra_config'], true);
 		$config = $all_config['links'];
 
@@ -98,8 +97,8 @@
 
 		$all_config['links'] = $config;
 		$str = json_encode($all_config);
-		$str = mysql_real_escape_string($str);
-		mysql_query("update contests set extra_config='${str}' where id='${contest_id}'");
+		$str = DB::escape($str);
+		DB::query("update contests set extra_config='${str}' where id='${contest_id}'");
 	};
 	$blog_link_contests->runAtServer();
 	
@@ -209,6 +208,48 @@
 		DB::delete("delete from custom_test_submissions order by id asc limit {$vdata['last']}");
 	};
 	$custom_test_deleter->runAtServer();
+
+	$add_blog_id = new UOJForm('add_blog_id');
+	$add_blog_id->addInput('blogid', 'text', '博客ID', '',
+        function ($x) {
+	    	if (!validateUInt($x)) return 'ID不合法';
+	    	$qBlog = queryBlog($x);
+            if (!$qBlog) return '博客不存在';
+            if (!$qBlog['need_permit']) return '博客不需要审核';
+	    	return '';
+	    },
+	    null
+	);
+	$add_blog_id->handle = function() {
+		$blog_id = $_POST['blogid'];
+		$qBlog = queryBlog($blog_id);
+		$qUser = queryUser($qBlog['poster']); //一定相同
+        $contri = $qUser['contribution']+1;
+        DB::update("update user_info set contribution = {$contri} where username = '{$qBlog['poster']}'");
+        DB::update("update blogs set is_permitted = 1 , need_permit = 0 where id = {$blog_id}");
+	};
+	$add_blog_id->runAtServer();
+	
+	$del_blog_id = new UOJForm('del_blog_id');
+	$del_blog_id->addInput('delblogid', 'text', '博客ID', '',
+        function ($x) {
+	    	if (!validateUInt($x)) return 'ID不合法';
+	    	if (!queryBlog($x)) return '博客不存在';
+	    	return '';
+	    },
+	    null
+	);
+	$del_blog_id->handle = function() {
+		$blog_id2 = $_POST['delblogid'];
+		$qBlog = queryBlog($blog_id2);
+		if ($qBlog['is_permitted']) { //删除
+			$qUser = queryUser($qBlog['poster']); //一定相同
+        	$contri = $qUser['contribution']-1;
+			DB::update("update user_info set contribution = {$contri} where username = '{$qBlog['poster']}'");
+		}
+        DB::update("update blogs set need_permit = 0 , is_permitted = 0 where id = {$blog_id2}");
+	};
+	$del_blog_id->runAtServer();
 	
 	$banlist_cols = array('username', 'usergroup');
 	$banlist_config = array();
@@ -222,6 +263,27 @@ EOD;
 		echo <<<EOD
 			<tr>
 				<td>${hislink}</td>
+			</tr>
+EOD;
+	};
+
+	$sol_list_cols = array('id', 'poster', 'sol', 'need_permit');
+	$sol_list_config = array();
+	$sol_list_header_row = <<<EOD
+	<tr>
+		<th>id</th>
+		<th>题目</th>
+		<th>作者</th>
+	</tr>
+EOD;
+	$sol_list_print_row = function($row) {
+		$poster_link = getUserLink($row['poster']);
+		$sol_link = HTML::blog_url($row['poster'].'/blog/'.$row['id']);
+		echo <<<EOD
+			<tr>
+				<td><a href="${sol_link}">${row['id']}</a></td>
+				<td><a href="/problem/${row['sol']}">${row['sol']}</a></td>
+				<td>${poster_link}</td>
 			</tr>
 EOD;
 	};
@@ -244,6 +306,10 @@ EOD;
 		'custom-test' => array(
 			'name' => '自定义测试',
 			'url' => '/super-manage/custom-test'
+		),
+		'sol' => array(
+			'name' => '题解管理',
+			'url' => '/super-manage/sol'
 		),
 		'click-zan' => array(
 			'name' => '点赞管理',
@@ -296,7 +362,7 @@ EOD;
 			</div>
 			<div>
 				<h4>测评失败的提交记录</h4>
-				<?php echoSubmissionsList("result_error = 'Judgment Failed'", 'order by id desc', $myUser); ?>
+				<?php echoSubmissionsList("result_error = 'Judgement Failed'", 'order by id desc', array('result_hidden' => ''), $myUser); ?>
 			</div>
 		<?php elseif ($cur_tab === 'custom-test'): ?>
 		<?php $custom_test_deleter->printHTML() ?>
@@ -329,6 +395,13 @@ EOD;
 			}
 		?>
 		<?= $submissions_pag->pagination() ?>
+		<?php elseif ($cur_tab === 'sol'): ?>
+		<h3>待审核题解</h3>
+		<?php echoLongTable($sol_list_cols, 'blogs', "need_permit=1", '', $sol_list_header_row, $sol_list_print_row, $sol_list_config) ?>
+		<h3>通过</h3>
+		<?php $add_blog_id->printHTML(); ?>
+		<h3>删除或不通过</h3>
+		<?php $del_blog_id->printHTML(); ?>
 		<?php elseif ($cur_tab === 'click-zan'): ?>
 		没写好QAQ
 		<?php elseif ($cur_tab === 'search'): ?>

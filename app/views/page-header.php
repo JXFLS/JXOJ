@@ -42,15 +42,15 @@
 		<script type="text/javascript">uojHome = '<?= HTML::url('/') ?>'</script>
 
 		<!-- Bootstrap core CSS -->
-		<?= HTML::css_link('/css/bootstrap.min.css?v=2015.5.31') ?>
+		<?= HTML::css_link('/css/bootstrap.min.css') ?>
 		<!-- Bootstrap theme -->
 
 		<!-- Custom styles for this template -->
-		<?= HTML::css_link('/css/uoj-theme.css?v=2.33') ?>
+		<?= HTML::css_link('/css/uoj-theme.css') ?>
 		
 		<!-- jQuery (necessary for Bootstrap\'s JavaScript plugins) -->
 		<?= HTML::js_src('/js/jquery.min.js') ?>
-		
+	
 		<!-- jQuery autosize -->
 		<?= HTML::js_src('/js/jquery.autosize.min.js') ?>
 		<script type="text/javascript">
@@ -71,7 +71,7 @@
 		<?php endif ?>
 		
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
-		<?= HTML::js_src('/js/bootstrap.min.js?v=2015.5.31') ?>
+		<?= HTML::js_src('/js/bootstrap.min.js') ?>
 		
 		<!-- Color converter -->
 		<?= HTML::js_src('/js/color-converter.min.js') ?>
@@ -198,12 +198,6 @@
 		<!-- ckeditor -->
 		<?= HTML::js_src('/js/ckeditor/ckeditor.js') ?>
 		<?php endif ?>
-
-		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-		<![endif]-->
 		
 		<script type="text/javascript">
 		before_window_unload_message = null;
@@ -213,13 +207,8 @@
 			}
 		});
 		</script>
-		
-		<?php if (UOJConfig::$data['switch']['web-analytics']): ?>
-		<script>var _hmt = _hmt || [];(function() {var hm = document.createElement("script");hm.src = "//hm.baidu.com/hm.js?bbd5ae87bf89e087603a1988103688ff";var s = document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm, s);})();</script>
-		<?php endif ?>
-		<link href="https://fonts.proxy.ustclug.org/css?family=Roboto" rel="stylesheet"> 
 	</head>
 	<body role="document">
 		<?php uojIncludeView($PageNav) ?>
 		<div class="uoj-content">
-	</body>
+</body>

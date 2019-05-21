@@ -89,16 +89,16 @@ function submitLoginPost() {
 	}, function(msg) {
 		if (msg == 'ok') {
 			var prevUrl = document.referrer;
-			if (prevUrl == '' || /.*\/login.*/.test(prevUrl) || /.*\/register.*/.test(prevUrl) || /.*\/reset-password.*/.test(prevUrl)) {
+			if (prevUrl == '' || /.*\/login.*/.test(prevUrl) || /.*\/logout.*/.test(prevUrl) || /.*\/register.*/.test(prevUrl) || /.*\/reset-password.*/.test(prevUrl)) {
 				prevUrl = '/';
 			};
 			window.location.href = prevUrl;
 		} else if (msg == 'banned') {
 			$('#div-username').addClass('has-error');
-			$('#help-username').html('用户已被禁用。');
+			$('#help-username').html('该用户已被封停，请联系管理员。');
 		} else if (msg == 'expired') {
 			$('#div-username').addClass('has-error');
-			$('#help-username').html('页面已过期。');
+			$('#help-username').html('页面会话已过期。');
 		} else {
 			$('#div-username').addClass('has-error');
 			$('#help-username').html('用户名或密码错误。');

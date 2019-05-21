@@ -120,7 +120,7 @@
 			$styler->fade_all_details = true;
 			$styler->show_small_tip = false;
 			if ($contest['extra_config']['contest_type']=='IOI' && $contest['cur_progress'] == CONTEST_IN_PROGRESS) {
-				$styler->contest_is_running = true;
+				$styler->ioi_contest_is_running = true;
 			}
 		}
 	}
@@ -133,7 +133,7 @@
 
 <?php if ($should_show_content): ?>
 	<?php echoSubmissionContent($submission, getProblemSubmissionRequirement($problem)) ?>
-	<?php if ($hackable): ?>
+	<!--<?php if ($hackable): ?>
 		<p class="text-center">
 			这程序好像有点Bug，我给组数据试试？ <button id="button-display-hack" type="button" class="btn btn-danger btn-xs">Hack!</button>
 		</p>
@@ -147,15 +147,15 @@
 				});
 			});
 		</script>
-	<?php endif ?>
+	<?php endif ?>-->
 <?php endif ?>
 
 <?php if ($should_show_all_details): ?>
-	<div class="panel panel-info">
+	<!--<div class="panel panel-info">
 		<div class="panel-heading">
 			<h4 class="panel-title"><?= UOJLocale::get('details') ?></h4>
 		</div>
-		<div class="panel-body">
+		<div class="panel-body">-->
 			<?php echoJudgementDetails($submission_result['details'], $styler, 'details') ?>
 			<?php if ($should_show_details_to_me): ?>
 				<?php if (isset($submission_result['final_result'])): ?>
@@ -167,8 +167,8 @@
 					<?php echoSubmissionDetails($submission_result['details'], 'final_details') ?>
 				<?php endif ?>
 			<?php endif ?>
-		</div>
-	</div>
+		<!--</div>
+	</div>-->
 <?php endif ?>
 
 <?php if (isset($rejudge_form)): ?>
