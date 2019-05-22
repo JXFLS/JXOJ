@@ -33,6 +33,8 @@
 					</p>
 				</div>
 			</div>-->
+			<!-- decorate -->
+		    <?= HTML::js_src('/js/decorate.js') ?>
 			<div align=center style="padding:1em;margin-top:1em;">
 			<span style="color:#999;">
 				JXOJ Powered by <a href="https://github.com/JXFLS/JXOJ" target="_blank">JXOJ</a>

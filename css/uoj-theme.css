@@ -557,3 +557,7 @@ article table {
 	color: #a94442;
 	margin-bottom: 1em;
 }
+
+.sample-copy {
+    border-radius:.28571429rem;
+}
