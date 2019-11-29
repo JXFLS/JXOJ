@@ -36,7 +36,7 @@
 		<ul class="list-inline bot-buffer-no">
 			<li>
 			<?php foreach (queryBlogTags($blog['id']) as $tag): ?>
-				<?php echoBlogTag($tag) ?>
+				<?php echoBlogTag($tag, UOJContext::userid()) ?>
 			<?php endforeach ?>
 			</li>
 			<?php if ($is_preview): ?>

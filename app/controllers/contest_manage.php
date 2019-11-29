@@ -190,6 +190,21 @@
 			DB::update("update contests set extra_config = '$esc_extra_config' where id = {$contest['id']}");
 		};
 		$contest_type_form->runAtServer();
+
+		$password_form = new UOJForm('password');
+		$password_form->addInput('password', 'text', '密码', $contest['password'],
+			function ($x) {
+				if (strlen($x)>20) return '密码过长';
+				return '';
+			},
+			null
+		);
+		$password_form->handle = function() {
+			global $contest;
+			$contest['password'] = $_POST['password'];
+			DB::update("update contests set password = '{$contest['password']}' where id = {$contest['id']}");
+		};
+		$password_form->runAtServer();
 	}
 	
 	$time_form->runAtServer();
@@ -277,6 +292,10 @@
 			<div class="col-sm-12 top-buffer-sm">
 				<h3>赛制</h3>
 				<?php $contest_type_form->printHTML(); ?>
+			</div>
+			<div class="col-sm-12 top-buffer-sm">
+				<h3>设置密码</h3>
+				<?php $password_form->printHTML(); ?>
 			</div>
 		</div>
 	</div>

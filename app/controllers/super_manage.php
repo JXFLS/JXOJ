@@ -224,9 +224,12 @@
 		$blog_id = $_POST['blogid'];
 		$qBlog = queryBlog($blog_id);
 		$qUser = queryUser($qBlog['poster']); //一定相同
-        $contri = $qUser['contribution']+1;
+		$contri = $qUser['contribution'] + 1;
+		$qProblem = queryProblemBrief($qBlog['sol']);
+		$sol_num = $qProblem['sol_num'] + 1;
         DB::update("update user_info set contribution = {$contri} where username = '{$qBlog['poster']}'");
-        DB::update("update blogs set is_permitted = 1 , need_permit = 0 where id = {$blog_id}");
+		DB::update("update blogs set is_permitted = 1 , need_permit = 0 where id = {$blog_id}");
+		DB::update("update problems set sol_num = {$sol_num} where id = {$qBlog['sol']}");
 	};
 	$add_blog_id->runAtServer();
 	
@@ -244,8 +247,11 @@
 		$qBlog = queryBlog($blog_id2);
 		if ($qBlog['is_permitted']) { //删除
 			$qUser = queryUser($qBlog['poster']); //一定相同
-        	$contri = $qUser['contribution']-1;
+			$contri = $qUser['contribution'] - 1;
+			$qProblem = queryProblemBrief($qBlog['sol']);
+			$sol_num = $qProblem['sol_num'] - 1;
 			DB::update("update user_info set contribution = {$contri} where username = '{$qBlog['poster']}'");
+			DB::update("update problems set sol_num = {$sol_num} where id = {$qBlog['sol']}");
 		}
         DB::update("update blogs set need_permit = 0 , is_permitted = 0 where id = {$blog_id2}");
 	};

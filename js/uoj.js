@@ -130,7 +130,7 @@ function getColOfScore(score) {
 	}
 }
 
-function getUserLink(username, rating, addSymbol) {
+function getUserLink(username, rating, addSymbol, is_vip) {
 	if (!username) {
 		return '';
 	}
@@ -150,9 +150,10 @@ function getUserLink(username, rating, addSymbol) {
 			text += "</sup>";
 		}
 	}
+	if (is_vip==1) return '<a class="uoj-username jx-passport" href="' + uojHome + '/user/profile/' + username + '" style="color:' + getColOfRating(rating) + '">' + text + '</a>';
 	return '<a class="uoj-username" href="' + uojHome + '/user/profile/' + username + '" style="color:' + getColOfRating(rating) + '">' + text + '</a>';
 }
-function getUserSpan(username, rating, addSymbol) {
+function getUserSpan(username, rating, addSymbol, is_vip) {
 	if (!username) {
 		return '';
 	}
@@ -172,19 +173,21 @@ function getUserSpan(username, rating, addSymbol) {
 			text += "</sup>";
 		}
 	}
+	if (is_vip==1) return '<span class="uoj-username jx-passport" style="color:' + getColOfRating(rating) + '">' + text + '</span>';
 	return '<span class="uoj-username" style="color:' + getColOfRating(rating) + '">' + text + '</span>';
 }
 
 function replaceWithHighlightUsername() {
 	var username = $(this).text();
 	var rating = $(this).data("rating");
+	var is_vip = $(this).data("vip");
 	if (isNaN(rating)) {
 		return;
 	}
 	if ($(this).data("link") != 0) {
-		$(this).replaceWith(getUserLink(username, rating));
+		$(this).replaceWith(getUserLink(username, rating, true, is_vip));
 	} else {
-		$(this).replaceWith(getUserSpan(username, rating));
+		$(this).replaceWith(getUserSpan(username, rating, true, is_vip));
 	}
 }
 
@@ -279,17 +282,25 @@ function validateMotto(str) {
 	}
 }
 
+function validateRealname(str) {
+	if (str.length > 50) {
+		return '不能超过50字';
+	} else {
+		return '';
+	}
+}
+
 // tags
 $.fn.uoj_problem_tag = function() {
 	return this.each(function() {
 		$(this).attr('href', uojHome + '/problems?tag=' + encodeURIComponent($(this).text()));
 	});
 }
-$.fn.uoj_blog_tag = function() {
-	return this.each(function() {
-		$(this).attr('href', '/archive?tag=' + encodeURIComponent($(this).text()));
-	});
-}
+//$.fn.uoj_blog_tag = function() {
+//	return this.each(function() {
+//		$(this).attr('href', '/archive?tag=' + encodeURIComponent($(this).text()));
+//	});
+//}
 
 // click zan
 function click_zan(zan_id, zan_type, zan_delta, node) {
@@ -448,7 +459,7 @@ $.fn.uoj_highlight = function() {
 			}
 		});
 		$(this).find(".uoj-problem-tag").uoj_problem_tag();
-		$(this).find(".uoj-blog-tag").uoj_blog_tag();
+		//$(this).find(".uoj-blog-tag").uoj_blog_tag();
 		$(this).find(".uoj-click-zan-block").click_zan_block();
 		$(this).find(".countdown").countdown();
 	});
@@ -1114,6 +1125,7 @@ function showStandings() {
 		function(row) {
 			var col_tr = '<tr>';
 			col_tr += '<td>' + row[3] + '</td>';
+			var heihei = row[2][2] ? '&nbsp;<span style="font-size: 12px; color: grey">' + row[2][2] + '</span>' : '';
 			col_tr += '<td>' + getUserLink(row[2][0], row[2][1]) + '</td>';
 			col_tr += '<td>' + '<div><span class="uoj-score" data-max="' + problems.length * 100 + '" style="color:' + getColOfScore(row[0] / problems.length) + '">' + row[0] + '</span></div>' + '<div>' + getPenaltyTimeStr(row[1]) + '</div></td>';
 			for (var i = 0; i < problems.length; i++) {

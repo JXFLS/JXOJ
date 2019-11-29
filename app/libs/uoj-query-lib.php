@@ -120,7 +120,7 @@ function isContestProblemVisibleToUser($problem, $contest, $user) {
 }
 
 function isSubmissionVisibleToUser($submission, $problem, $user) {
-	if (isSuperUser($user)) {
+	if (isSuperUser($user) || $submission['submitter'] == Auth::id()) {
 		return true;
 	} else if (!$submission['is_hidden']) {
 		return true;

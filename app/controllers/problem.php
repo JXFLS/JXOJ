@@ -1,6 +1,11 @@
 <?php
 	requirePHPLib('form');
 	requirePHPLib('judger');
+
+	if ($myUser == null) {
+		header("Location: /login");
+		die();
+	}
 	
 	if (!validateUInt($_GET['id']) || !($problem = queryProblemBrief($_GET['id']))) {
 		become404Page();
@@ -23,6 +28,10 @@
 	$ban_in_contest = false;
 	if ($contest != null) {
 		if (!hasContestPermission($myUser, $contest)) {
+			if (!hasRegistered($myUser, $contest)) {
+				header("Location: /contest/{$contest['id']}/register");
+				die();
+			}
 			if ($contest['cur_progress'] == CONTEST_NOT_STARTED) {
 				become404Page();
 			} elseif ($contest['cur_progress'] == CONTEST_IN_PROGRESS) {
@@ -32,7 +41,7 @@
 					$is_in_contest = true;
 					DB::update("update contests_registrants set has_participated = 1 where username = '{$myUser['username']}' and contest_id = {$contest['id']}");
 				}
-			} else {
+			} elseif ($contest['cur_progress'] == CONTEST_TESTING || $contest['cur_progress'] == CONTEST_PENDING_FINAL_TEST) {
 				$ban_in_contest = !isProblemVisibleToUser($problem, $myUser);
 			}
 		}
@@ -109,7 +118,7 @@
 		$result['status'] = "Waiting";
 		$result_json = json_encode($result);
 		
-		if ($is_in_contest) {
+		if ($contest != null) {
 			DB::query("insert into submissions (problem_id, contest_id, submit_time, submitter, content, language, tot_size, status, result, is_hidden) values (${problem['id']}, ${contest['id']}, now(), '${myUser['username']}', '$esc_content', '$esc_language', $tot_size, '${result['status']}', '$result_json', 0)");
 		} else {
 			DB::query("insert into submissions (problem_id, submit_time, submitter, content, language, tot_size, status, result, is_hidden) values (${problem['id']}, now(), '${myUser['username']}', '$esc_content', '$esc_language', $tot_size, '${result['status']}', '$result_json', {$problem['is_hidden']})");
@@ -282,9 +291,10 @@ $('#contest-countdown').countdown(<?= $contest['end_time']->getTimestamp() - UOJ
 	<li class="active"><a href="#tab-statement" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-book"></span> <?= UOJLocale::get('problems::statement') ?></a></li>
 	<li><a href="#tab-submit-answer" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-upload"></span> <?= UOJLocale::get('problems::submit') ?></a></li>
 	<?php if ($custom_test_requirement): ?>
-	<li><a href="#tab-custom-test" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-console"></span> <?= UOJLocale::get('problems::custom test') ?></a></li>
+	<li><a href="#tab-custom-test" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-console"></span> 测试</a></li>
 	<?php endif ?>
-	<li><a href="/problem/<?= $problem['id'] ?>/sol"><span class="glyphicon glyphicon-eye-open"></span> 题解</a></li>
+	<li><a href="<?= $problem['id'] ?>/sol"><span class="glyphicon glyphicon-eye-open"></span> 题解</a></li>
+	<li><a href="/submissions?problem_id=<?=$problem['id']?>"><span class="glyphicon glyphicon-info-sign"></span> 提交记录</a></li>
 	<?php if ($extra != null): ?>
 	<li><a href="<?=$extra?>" target="_blank"><span class="glyphicon glyphicon-download-alt"></span> 附加文件</a></li>
 	<?php endif ?>
@@ -344,3 +354,24 @@ $('#contest-countdown').countdown(<?= $contest['end_time']->getTimestamp() - UOJ
     }
  );
 </script>
+<?php
+	global $myUser;
+	if (Auth::check() && !$myUser['realname'] && !isSuperUser($myUser)):
+	?>
+	<script>
+	BootstrapDialog.show({
+		title   : '您尚未设置真实姓名',
+		message : '请前往用户设置进行设置',
+		type    : BootstrapDialog.TYPE_DANGER,
+		buttons : [{
+			label: '好的',
+			action: function(dialog) {
+				window.location.href = '/user/modify-profile';
+			}
+		}],
+		onhidden : function(dialog) {
+			dialog.close();
+		}
+	});
+	</script>
+<?php endif;?>

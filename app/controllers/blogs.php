@@ -1,4 +1,8 @@
 <?php
+if ($myUser == null) {
+	header("Location: /login");
+	die();
+}
 	requirePHPLib('form');
 	
 	function echoBlogCell($blog) {

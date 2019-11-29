@@ -11,16 +11,37 @@
 	} else {
 		$blog = DB::selectFirst("select * from blogs where poster = '".UOJContext::user()['username']."' and type = 'B' and is_draft = true");
 	}
+
+	$sol_id = $_GET['sol'];
 	
 	$blog_editor = new UOJBlogEditor();
 	$blog_editor->name = 'blog';
-	if ($blog) {
+	if ($blog && isset($sol_id)) {
 		$blog_editor->cur_data = array(
 			'title' => $blog['title'],
 			'content_md' => $blog['content_md'],
 			'content' => $blog['content'],
 			'tags' => queryBlogTags($blog['id']),
+			'sol' => $sol_id,
 			'is_hidden' => $blog['is_hidden']
+		);
+	} else if ($blog && !isset($sol_id)) {
+		$blog_editor->cur_data = array(
+			'title' => $blog['title'],
+			'content_md' => $blog['content_md'],
+			'content' => $blog['content'],
+			'tags' => queryBlogTags($blog['id']),
+			'sol' => $blog['sol'],
+			'is_hidden' => $blog['is_hidden']
+		);
+	} else if (!$blog && isset($sol_id)){
+		$blog_editor->cur_data = array(
+			'title' => '新博客',
+			'content_md' => '',
+			'content' => '',
+			'tags' => array(),
+			'sol' => $sol_id,
+			'is_hidden' => true
 		);
 	} else {
 		$blog_editor->cur_data = array(
@@ -28,6 +49,7 @@
 			'content_md' => '',
 			'content' => '',
 			'tags' => array(),
+			'sol' => null,
 			'is_hidden' => true
 		);
 	}
@@ -77,14 +99,52 @@
 				DB::insert("insert into blogs_tags (blog_id, tag) values ({$blog['id']}, '".DB::escape($tag)."')");
 			}
 		}
+		if ($data['sol']!=null) {
+			/*if (!$blog['is_permitted']) { //没有通过
+				DB::update("update blogs set need_permit = 1 , sol = {$data['sol']} where id = {$blog['id']}");
+			}
+			else if ($blog['sol']!=$data['sol']) { //更换审核
+				$qUser = queryUser($blog['poster']);
+                $contri = $qUser['contribution']-1;
+                DB::update("update user_info set contribution = {$contri} where username = '{$blog['poster']}'");
+				DB::update("update blogs set is_permitted = 0 , need_permit = 1 , sol = {$data['sol']} where id = {$blog['id']}");
+			}*/
+			if ($data['sol']!=$blog['sol'] || $data['content']!=$blog['content'] || $data['title']!=$blog['title']) {
+				if ($blog['is_permitted']) {
+					$qUser = queryUser($blog['poster']);
+            	    $contri = $qUser['contribution']-1;
+            	    DB::update("update user_info set contribution = {$contri} where username = '{$blog['poster']}'");
+				}
+				DB::update("update blogs set is_permitted = 0 , need_permit = 1 , sol = {$data['sol']} where id = {$blog['id']}");
+			}
+		}
+		else {
+			if ($blog['is_permitted']) { //已审核通过则减去贡献
+				$qUser = queryUser($blog['poster']);
+                $contri = $qUser['contribution']-1;
+                DB::update("update user_info set contribution = {$contri} where username = '{$blog['poster']}'");
+			}
+			DB::update("update blogs set is_permitted = 0 , need_permit = 0 , sol = 0 where id = {$blog['id']}");
+		}
 		return $ret;
 	};
 	
 	$blog_editor->runAtServer();
 ?>
 <?php echoUOJPageHeader('写博客') ?>
-<div class="text-right">
-<a href="http://uoj.ac/blog/7">这玩意儿怎么用？</a>
+<div class="text-right" style="color:red">
+<?php if ($blog['is_permitted'] && !isset($sol_id)) { ?>
+这篇题解已通过题目 #<?=$blog['sol']?> 的审核，如果修改将重新审核。
+<?php } else if (!$blog['is_permitted'] && isset($sol_id)) {?>
+正在提交对题目 #<?=$sol_id?> 的审核。
+<?php } else if ($blog['is_permitted'] && isset($sol_id)) {?>
+这篇题解已通过题目 #<?=$blog['sol']?> 的审核，您确定要修改为题目 #<?=$sol_id?> 吗？
+<?php } ?>
 </div>
 <?php $blog_editor->printHTML() ?>
+<!--<h1>
+由于技术升级原因，JXOJ博客系统由6.3 23:20-6.5 00:00期间维护，期间不能使用任何博客功能，正常做题不受影响。
+<br>
+造成不便，敬请谅解。
+</h1>-->
 <?php echoUOJPageFooter() ?>

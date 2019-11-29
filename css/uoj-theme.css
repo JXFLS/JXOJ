@@ -1,3 +1,14 @@
+/*html {
+    -webkit-filter: grayscale(100%);
+    -moz-filter: grayscale(100%);
+    -ms-filter: grayscale(100%);
+    -o-filter: grayscale(100%);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);
+    _-webkit-filter: none;
+    _filter: none;
+    //KyoAni Strong
+}*/
+
 @font-face {
 	font-family: 'Roboto';
 	font-style: normal;
@@ -21,7 +32,6 @@ body {
 	font-family: 'Roboto', sans-serif !important;
 	position: relative;
 	width: 100%;
-	min-height: 100vh;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -32,33 +42,8 @@ td {
 	line-height:1.8 !important;
 }
 
-@media only screen and (max-width:768px) {
-	.uoj-content {
-		min-height: 100%;
-		margin: 8rem 2rem auto 2rem;
-	}
-}
-
-@media only screen and (min-width:768px) {
-	.uoj-content {
-		min-height: 100%;
-		margin: 8rem 8rem auto 8rem;
-	}
-}
-
-@media only screen and (max-width:768px) {
-	.nav-content {
-		margin: 0 2rem auto 2rem;
-	}
-}
-
-@media only screen and (min-width:768px) {
-	.nav-content {
-		margin: 0 8rem auto 8rem;
-	}
-	.navbar-header {
-		margin-left:-15px;
-	}
+.uoj-content {
+    margin-top:8em;
 }
 
 .nav-pills {

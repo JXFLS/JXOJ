@@ -3,6 +3,9 @@
 		if (!crsf_check()) {
 			return '页面已过期';
 		}
+		/*if (!isset($_POST['code'])) {
+			return "无效表单";
+		}*/
 		if (!isset($_POST['username'])) {
 			return "无效表单";
 		}
@@ -13,9 +16,13 @@
 			return "无效表单";
 		}
 
+		$code = $_POST['code'];
 		$username = $_POST['username'];
 		$password = $_POST['password'];
 		$email = $_POST['email'];
+		if ($code!='jxwzxakioi') {
+			return "失败：无效邀请码。";
+		}
 		if (!validateUsername($username)) {
 			return "失败：无效用户名。";
 		}
@@ -62,6 +69,13 @@
 <?php echoUOJPageHeader(UOJLocale::get('register')) ?>
 <h2 class="page-header"><?= UOJLocale::get('register') ?></h2>
 <form id="form-register" class="form-horizontal">
+	<div id="div-code" class="form-group">
+		<label for="input-email" class="col-sm-2 control-label">邀请码</label>
+		<div class="col-sm-3">
+			<input type="text" class="form-control" id="input-code" name="code" placeholder="需要邀请码才能注册" maxlength="50" />
+			<span class="help-block" id="help-code"></span>
+		</div>
+	</div>
 	<div id="div-email" class="form-group">
 		<label for="input-email" class="col-sm-2 control-label"><?= UOJLocale::get('email') ?></label>
 		<div class="col-sm-3">
@@ -137,6 +151,7 @@ function submitRegisterPost() {
 	$.post('/register', {
 		_token : "<?= crsf_token() ?>",
 		register : '',
+		code : $('#input-code').val(),
 		username : $('#input-username').val(),
 		email		: $('#input-email').val(),
 		password : md5($('#input-password').val(), "<?= getPasswordClientSalt() ?>")

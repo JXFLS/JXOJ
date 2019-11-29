@@ -1,4 +1,8 @@
 <?php
+if ($myUser == null) {
+	header("Location: /login");
+	die();
+}
 	requirePHPLib('form');
 	
 	if (!validateUInt($_GET['id']) || !($contest = queryContest($_GET['id']))) {

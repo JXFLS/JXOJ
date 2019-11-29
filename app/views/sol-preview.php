@@ -11,7 +11,7 @@
 		    <ul class="list-inline bot-buffer-no">
 		    	<li>
 		    	<?php foreach (queryBlogTags($blog['id']) as $tag): ?>
-		    		<?php echoBlogTag($tag) ?>
+		    		<?php echoBlogTag($tag, $blog['poster']) ?>
 		    	<?php endforeach ?>
 		    	</li>
   		    	<li><a href="<?= HTML::blog_url($blog['poster'].'/blog/'.$blog['id']) ?>">去博客查看</a></li>

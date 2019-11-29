@@ -1,5 +1,10 @@
 <?php
 	requirePHPLib('form');
+
+	if ($myUser == null) {
+		header("Location: /login");
+		die();
+	}
 	
 	$upcoming_contest_name = null;
 	$upcoming_contest_href = null;
@@ -41,7 +46,7 @@ EOD;
 		echo '<td>', '<a href="'.HTML::timeanddate_url($contest['start_time'], array('duration' => $contest['last_min'])).'">'.$contest['start_time_str'].'</a>', '</td>';
 		echo '<td>', UOJLocale::get('hours', $last_hour), '</td>';
 		echo '<td>', '<a href="/contest/'.$contest['id'].'/registrants"><span class="glyphicon glyphicon-user"></span> &times;'.$contest['player_num'].'</a>', '</td>';
-		echo '<td>', '<div class="text-left">'.$click_zan_block.'</div>', '</td>';
+		//echo '<td>', '<div class="text-left">'.$click_zan_block.'</div>', '</td>';
 		echo '</tr>';
 	}
 ?>
@@ -54,7 +59,7 @@ EOD;
 	$table_header .= '<th style="width:15em;">'.UOJLocale::get('contests::start time').'</th>';
 	$table_header .= '<th style="width:100px;">'.UOJLocale::get('contests::duration').'</th>';
 	$table_header .= '<th style="width:100px;">'.UOJLocale::get('contests::the number of registrants').'</th>';
-	$table_header .= '<th style="width:180px;">'.UOJLocale::get('appraisal').'</th>';
+	//$table_header .= '<th style="width:180px;">'.UOJLocale::get('appraisal').'</th>';
 	$table_header .= '</tr>';
 	echoLongTable(array('*'), 'contests', "status != 'finished'", 'order by id desc', $table_header,
 		echoContest,
@@ -94,4 +99,25 @@ EOD;
 		)
 	);
 ?>
+<?php
+	global $myUser;
+	if (Auth::check() && !$myUser['realname'] && !isSuperUser($myUser)):
+	?>
+	<script>
+	BootstrapDialog.show({
+		title   : '您尚未设置真实姓名',
+		message : '请前往用户设置进行设置',
+		type    : BootstrapDialog.TYPE_DANGER,
+		buttons : [{
+			label: '好的',
+			action: function(dialog) {
+				window.location.href = '/user/modify-profile';
+			}
+		}],
+		onhidden : function(dialog) {
+			dialog.close();
+		}
+	});
+	</script>
+<?php endif;?>
 <?php echoUOJPageFooter() ?>

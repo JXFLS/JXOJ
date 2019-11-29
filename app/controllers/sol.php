@@ -2,15 +2,34 @@
 
     requirePHPLib('form');
 
+    if ($myUser == null) {
+        header("Location: /login");
+        die();
+    }
+
     if (!validateUInt($_GET['id']) || !($problem = queryProblemBrief($_GET['id']))) {
 		become404Page();
     }
 
-    if (!isProblemVisibleToUser($problem, $myUser)) {
-        become404Page();
-    }
+    $contest = validateUInt($_GET['contest_id']) ? queryContest($_GET['contest_id']) : null;
+    if ($contest != null) {
+        genMoreContestInfo($contest);
+		if (!hasContestPermission($myUser, $contest)) {
+			if (!hasRegistered($myUser, $contest)) {
+				header("Location: /contest/{$contest['id']}/register");
+				die();
+            }
+			if ($contest['cur_progress'] != CONTEST_FINISHED) {
+				become404Page();
+			}
+		}
+	} else {
+		if (!isProblemVisibleToUser($problem, $myUser)) {
+			become404Page();
+		}
+	}
 
-    $add_blog_id = new UOJForm('add_blog_id');
+    /*$add_blog_id = new UOJForm('add_blog_id');
 	$add_blog_id->addInput('blogid', 'text', '博客ID', '',
         function ($x) {
             if (!validateUInt($x)) return 'ID不合法';
@@ -30,7 +49,10 @@
             if ($qBlog['is_permitted']==0) {
                 $qUser = queryUser($qBlog['poster']); //一定相同
                 $contri = $qUser['contribution']+1;
+                $qProblem = queryProblemBrief($_GET['id']);
+		        $sol_num = $qProblem['sol_num'] + 1;
                 DB::update("update user_info set contribution = {$contri} where username = '{$qBlog['poster']}'");
+                DB::update("update problems set sol_num = {$sol_num} where id = {$_GET['id']}");
             }
             DB::update("update blogs set is_permitted = 1 , is_hidden = 0 , sol = {$_GET['id']} where id = {$blog_id}");
         }
@@ -51,13 +73,17 @@
 	    	return '';
 	    },
 	    null
-	);
+    );
+    //有锅，无法正确更新题解个数。（该功能已被移除）
 	$del_blog_id->handle = function() {
         $blog_id2 = $_POST['delblogid'];
         if (Auth::check() && (isSuperUser(Auth::user()))) {
             if ($qBlog['is_permitted']==1) {
                 $qUser = queryUser($qBlog['poster']); //一定相同
-                $contri = $qUser['contribution']-1;
+                $contri = $qUser['contribution'] - 1;
+                $qProblem = queryProblemBrief($_GET['id']);
+		        $sol_num = $qProblem['sol_num'] - 1;
+                DB::update("update problems set sol_num = {$sol_num} where id = {$_GET['id']}");
                 DB::update("update user_info set contribution = {$contri} where username = '{$qBlog['poster']}'");
             }
             DB::update("update blogs set need_permit = 0 , is_permitted = 0 , is_hidden = 0 where id = {$blog_id2}");
@@ -66,12 +92,12 @@
             DB::update("update blogs set need_permit = 0 , is_hidden = 0 where id = {$blog_id2}");
         }
 	};
-	$del_blog_id->runAtServer();
+	$del_blog_id->runAtServer();*/
 
 	$blogs_pag = new Paginator(array(
 		'col_names' => array('*'),
 		'table_name' => 'blogs',
-		'cond' => "sol = '".$_GET['id']."' and is_hidden = 0 and is_permitted=1",
+		'cond' => "sol = '".$_GET['id']."' and is_permitted=1",
 		'tail' => 'order by zan desc limit 5',
 		'echo_full' => true
     ));
@@ -86,11 +112,10 @@
 
 <div class="row">
     <div class="col-md-9">
-        <div class="alert alert-info" role="alert">题解功能尚在测试阶段，有锅请私信 <a href="http://172.16.49.190/user/msg?enter=Llf">@Llf</a> 。</div>
         <?php if ($blogs_pag->isEmpty()): ?>
 		<div class="alert alert-warning alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>暂无题解。</strong> <a href="<?= HTML::blog_url(Auth::id(), '/blog/new/write')?>" class="alert-link">去写题解</a>，然后回到此页面提交。
+            <strong>暂无题解。</strong> <a href="<?= HTML::blog_url(Auth::id(), '/blog/new/write')?>?sol=<?=$problem['id']?>" class="alert-link">去写题解</a>，然后回到此页面提交。
         </div>
         <?php else: ?>
         <div class="alert alert-warning alert-dismissible" role="alert">
@@ -101,7 +126,7 @@
 			<?php echoSol($blog, array('is_preview' => true)) ?>
 		<?php endforeach ?>
 		<?php endif ?>
-        <div id="check" class="panel panel-default mdui-hoverable">
+        <!--<div id="check" class="panel panel-default mdui-hoverable">
   			<div class="panel-heading">
     			<h3 class="panel-title"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 提交审核</h3>
   			</div>
@@ -111,12 +136,12 @@
                     您是管理员，提交审核后将直接展示。
                 </div>
                 <?php endif; ?>
-                <?php $add_blog_id->printHTML();?>
+                <?php //$add_blog_id->printHTML();?>
   			</div>
-        </div>
+        </div>-->
         
         <?php //if (Auth::check() && (isSuperUser(Auth::user()))): ?> <!--没验证用户所以只能由管理员取消-->
-        <div id="del-check" class="panel panel-default mdui-hoverable">
+        <!--<div id="del-check" class="panel panel-default mdui-hoverable">
   			<div class="panel-heading">
     			<h3 class="panel-title"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> 取消审核</h3>
   			</div>
@@ -126,9 +151,9 @@
                     您是管理员，取消审核后将直接取消展示。
                 </div>
                 <?php endif; ?>
-                <?php $del_blog_id->printHTML();?>
+                <?php //$del_blog_id->printHTML();?>
   			</div>
-        </div>
+        </div>-->
         <?php //endif; ?>
     </div>
     <div class="col-md-3" style="position:sticky;top:5em">
@@ -136,11 +161,11 @@
             <div class="panel-body">
                 题目： <div style="float:right"><a href="/problem/<?= $problem['id']?>">#<?= $problem['id']?>. <?= $problem['title'] ?></a></div>
                 <br>
-                数量： <div style="float:right">0 篇</div>
+                数量： <div style="float:right">N/A</div>
                 <br> <br>
                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                    <a type="button" class="btn btn-danger" href="<?= HTML::blog_url(Auth::id(), '/blog/new/write')?>">撰写题解</a>
-                    <a type="button" class="btn btn-primary" href="#check">提交审核</a>
+                    <a type="button" class="btn btn-danger" href="<?= HTML::blog_url(Auth::id(), '/blog/new/write')?>?sol=<?=$problem['id']?>">撰写题解</a>
+                    <!--<a type="button" class="btn btn-primary" href="#check">提交审核</a>-->
                     <a type="button" class="btn btn-info" href="#">帮助</a>
                 </div>
             </div>

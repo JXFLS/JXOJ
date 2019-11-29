@@ -1,4 +1,9 @@
 <?php
+
+if ($myUser == null) {
+	header("Location: /login");
+	die();
+}
 	if (!validateUInt($_GET['id']) || !($problem = queryProblemBrief($_GET['id']))) {
 		become404Page();
 	}

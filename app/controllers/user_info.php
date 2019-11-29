@@ -1,4 +1,9 @@
 <?php
+
+if ($myUser == null) {
+	header("Location: /login");
+	die();
+}
 	$username = $_GET['username'];
 	
 	requireLib('flot');
@@ -22,6 +27,8 @@
 			$col_sex="color:black";
 		}
 		$esc_motto = HTML::escape($user['motto']);
+		$esc_contribution = HTML::escape($user['contribution']);
+		$esc_realname = HTML::escape($user['realname']);
 	?>
 	<div class="panel panel-info">
 		<div class="panel-heading">
@@ -33,7 +40,7 @@
 					<img class="media-object img-thumbnail center-block" alt="<?= $user['username'] ?> Avatar" src="<?= HTML::avatar_addr($user, 256) ?>" />
 				</div>
 				<div class="col-md-8 col-md-pull-4">
-					<h2><span class="uoj-honor" data-rating="<?= $user['rating'] ?>"><?= $user['username'] ?></span> <span><strong style="<?= $col_sex ?>"><?= $esc_sex ?></strong></span></h2>
+					<h2><span class="uoj-honor" data-rating="<?= $user['rating'] ?>"><?= $user['username'] ?></span> <span><strong style="<?= $col_sex ?>"><?= $esc_sex ?></strong></span><span style="font-size:20px"><?=$esc_realname?></span></h2>
 					<div class="list-group">
 						<div class="list-group-item">
 							<h4 class="list-group-item-heading"><?= UOJLocale::get('rating') ?></h4>
@@ -50,6 +57,10 @@
 						<div class="list-group-item">
 							<h4 class="list-group-item-heading"><?= UOJLocale::get('motto') ?></h4>
 							<p class="list-group-item-text"><?= $esc_motto ?></p>
+						</div>
+						<div class="list-group-item">
+							<h4 class="list-group-item-heading">贡献</h4>
+							<p class="list-group-item-text"><?= $esc_contribution ?></p>
 						</div>
 						<?php if (isSuperUser($myUser)): ?>
 						<div class="list-group-item">
@@ -76,7 +87,7 @@
 			<?php endif ?>
 			<?php endif ?>
 			
-			<a type="button" class="btn btn-success btn-sm" href="<?= HTML::blog_url($user['username'], '/') ?>"><span class="glyphicon glyphicon-arrow-right"></span> <?= UOJLocale::get('visit his blog', $username) ?></a>
+			<a type="button" class="btn btn-success btn-sm" href="<?= HTML::blog_url($user['username'], '/blog') ?>"><span class="glyphicon glyphicon-arrow-right"></span> <?= UOJLocale::get('visit his blog', $username) ?></a>
 			
 			<div class="top-buffer-lg"></div>
 			<div class="list-group">
@@ -253,5 +264,27 @@ $("#rating-plot").bind("plotclick", function (event, pos, item) {
 		</div>
 	</div>
 <?php endif ?>
+
+<?php
+	global $myUser;
+	if (Auth::check() && !$myUser['realname'] && !isSuperUser($myUser)):
+	?>
+	<script>
+	BootstrapDialog.show({
+		title   : '您尚未设置真实姓名',
+		message : '请前往用户设置进行设置',
+		type    : BootstrapDialog.TYPE_DANGER,
+		buttons : [{
+			label: '好的',
+			action: function(dialog) {
+				window.location.href = '/user/modify-profile';
+			}
+		}],
+		onhidden : function(dialog) {
+			dialog.close();
+		}
+	});
+	</script>
+<?php endif;?>
 
 <?php echoUOJPageFooter() ?>

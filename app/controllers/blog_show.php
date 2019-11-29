@@ -1,4 +1,8 @@
 <?php
+if ($myUser == null) {
+	header("Location: /login");
+	die();
+}
 	if (!validateUInt($_GET['id']) || !($blog = queryBlog($_GET['id']))) {
 		become404Page();
 	}

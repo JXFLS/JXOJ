@@ -1,6 +1,11 @@
 <?php
 	requirePHPLib('form');
 	requirePHPLib('judger');
+
+	if ($myUser == null && $_GET['passwd']!='jxwzxakioi') { //for Anti-Cheating
+		header("Location: /login");
+		die();
+	}
 	
 	if (!validateUInt($_GET['id']) || !($submission = querySubmission($_GET['id']))) {
 		become404Page();
@@ -133,7 +138,7 @@
 
 <?php if ($should_show_content): ?>
 	<?php echoSubmissionContent($submission, getProblemSubmissionRequirement($problem)) ?>
-	<!--<?php if ($hackable): ?>
+	<?php if ($hackable): ?>
 		<p class="text-center">
 			这程序好像有点Bug，我给组数据试试？ <button id="button-display-hack" type="button" class="btn btn-danger btn-xs">Hack!</button>
 		</p>
@@ -147,7 +152,7 @@
 				});
 			});
 		</script>
-	<?php endif ?>-->
+	<?php endif ?>
 <?php endif ?>
 
 <?php if ($should_show_all_details): ?>

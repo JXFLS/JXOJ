@@ -11,6 +11,7 @@ class UOJBlogEditor {
 	public $label_text = array(
 		'title' => '标题',
 		'tags' => '标签（多个标签用逗号隔开）',
+		'sol' => '提交题解审核（填写题目ID）',
 		'content' => '内容',
 		'view blog' => '查看博客',
 		'blog visibility' => '博客可见性',
@@ -64,6 +65,12 @@ class UOJBlogEditor {
 					$tags[] = $tag;
 				}
 				return '';
+			},
+			'sol' => function(&$sol) {
+				if ($sol==null) return '';
+				if (!validateUInt($sol)) return 'ID不合法';
+				if (!queryProblemBrief($sol)) return '无此题目';
+				return '';
 			}
 		);
 	}
@@ -78,7 +85,7 @@ class UOJBlogEditor {
 	}
 	private function receivePostData() {
 		$errors = array();
-		foreach (array('title', 'content_md', 'tags') as $name) {
+		foreach (array('title', 'content_md', 'tags' , 'sol') as $name) {
 			$cur_err = $this->validate($name);
 			if ($cur_err) {
 				$errors[$name] = $cur_err;

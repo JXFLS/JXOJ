@@ -2,6 +2,11 @@
 	requirePHPLib('form');
 	requirePHPLib('judger');
 	requirePHPLib('svn');
+
+	if ($myUser == null) {
+		header("Location: /login");
+		die();
+	}
 	
 	if (isSuperUser($myUser)) {
 		$new_problem_form = new UOJForm('new_problem');
@@ -52,7 +57,7 @@
 				</td>
 EOD;
 			}
-			echo '<td class="text-left">', getClickZanBlock('P', $problem['id'], $problem['zan']), '</td>';
+			//echo '<td class="text-left">', getClickZanBlock('P', $problem['id'], $problem['zan']), '</td>';
 			echo '</tr>';
 		}
 	}
@@ -89,7 +94,7 @@ EOD;
 		$header .= '<th class="text-center" style="width:5em;">'.UOJLocale::get('problems::submit').'</th>';
 		$header .= '<th class="text-center" style="width:150px;">'.UOJLocale::get('problems::ac ratio').'</th>';
 	}
-	$header .= '<th class="text-center" style="width:180px;">'.UOJLocale::get('appraisal').'</th>';
+	//$header .= '<th class="text-center" style="width:180px;">'.UOJLocale::get('appraisal').'</th>';
 	$header .= '</tr>';
 	
 	$tabs_info = array(
@@ -123,11 +128,12 @@ EOD;
 	);
 ?>*/
 
-	$pag_config = array('page_len' => 100);
+	$pag_config = array('page_len' => 50);
 	$pag_config['col_names'] = array('*');
 	$pag_config['table_name'] = "problems left join best_ac_submissions on best_ac_submissions.submitter = '{$myUser['username']}' and problems.id = best_ac_submissions.problem_id";
 	$pag_config['cond'] = $cond;
 	$pag_config['tail'] = "order by id asc";
+	$pag_config['is_problem_set'] = 1;
 	$pag = new Paginator($pag_config);
 
 	$div_classes = array('table-responsive');
@@ -205,4 +211,25 @@ $('#input-show_submit_mode').click(function() {
 	
 	echo $pag->pagination();
 ?>
+<?php
+	global $myUser;
+	if (Auth::check() && !$myUser['realname'] && !isSuperUser($myUser)):
+	?>
+	<script>
+	BootstrapDialog.show({
+		title   : '您尚未设置真实姓名',
+		message : '请前往用户设置进行设置',
+		type    : BootstrapDialog.TYPE_DANGER,
+		buttons : [{
+			label: '好的',
+			action: function(dialog) {
+				window.location.href = '/user/modify-profile';
+			}
+		}],
+		onhidden : function(dialog) {
+			dialog.close();
+		}
+	});
+	</script>
+<?php endif;?>
 <?php echoUOJPageFooter() ?>

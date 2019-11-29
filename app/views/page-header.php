@@ -77,7 +77,7 @@
 		<?= HTML::js_src('/js/color-converter.min.js') ?>
 		
 		<!-- uoj -->
-		<?= HTML::js_src('/js/uoj.js?v=2016.8.15') ?>
+		<?= HTML::js_src('/js/uoj.js') ?>
 		
 		<!-- LAB -->
 		<?= HTML::js_src('/js/LAB.min.js') ?>
@@ -92,7 +92,7 @@
 		<?= HTML::css_link('/js/codemirror/lib/codemirror.css') ?>
 		<?= HTML::css_link('/css/blog-editor.css') ?>
 		<?= HTML::js_src('/js/marked.js') ?>
-		<?= HTML::js_src('/js/blog-editor/blog-editor.js?v=2015.7.9') ?>
+		<?= HTML::js_src('/js/blog-editor/blog-editor.js') ?>
 		<?= HTML::js_src('/js/codemirror/lib/codemirror.js') ?>
 		<?= HTML::js_src('/js/codemirror/addon/mode/overlay.js') ?>
 		<?= HTML::js_src('/js/codemirror/addon/selection/active-line.js') ?>
@@ -121,11 +121,11 @@
 		<?= HTML::js_src('/js/md5.min.js') ?>
 		<?php endif ?>
 		
-		<?php if (isset($REQUIRE_LIB['dialog'])): ?>
+		<?php //if (isset($REQUIRE_LIB['dialog'])): ?>
 		<!-- Bootstrap dialog -->
 		<?= HTML::css_link('/css/bootstrap-dialog.min.css') ?>
 		<?= HTML::js_src('/js/bootstrap-dialog.min.js') ?>
-		<?php endif ?>
+		<?php //endif ?>
 		
 		<?php if (isset($REQUIRE_LIB['switch'])): ?>
 		<!-- Bootstrap switch -->
@@ -210,5 +210,6 @@
 	</head>
 	<body role="document">
 		<?php uojIncludeView($PageNav) ?>
-		<div class="uoj-content">
+		<!--<marquee style="position:sticky;z-index: 9999;top:6rem">由于技术升级原因，JXOJ博客系统由6.3 23:20-6.5 00:00期间维护，期间不能使用任何博客功能，正常做题不受影响。造成不便，敬请谅解。</marquee>-->
+		<div class="uoj-content container">
 </body>

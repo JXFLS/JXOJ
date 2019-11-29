@@ -1,4 +1,9 @@
 <?php
+
+if ($myUser == null) {
+	header("Location: /login");
+	die();
+}
 	if (isset($_GET['type']) && $_GET['type'] == 'rating') {
 		$config = array('page_len' => 100);
 	} else {

@@ -24,6 +24,14 @@
 			DB::update("update user_info set password = '$password' where username = '{$myUser['username']}'");
 		}
 
+		$realname = $_POST['realname'];
+		if (!validateRealname($realname))
+		{
+			return "失败：真实姓名不合法。";
+		}
+		$esc_realname = DB::escape($realname);
+		DB::update("update user_info set realname = '$esc_realname' where username = '{$myUser['username']}'");
+
 		$email = $_POST['email'];
 		if (!validateEmail($email))
 		{
@@ -86,6 +94,13 @@
 			<span class="help-block" id="help-password"><?= UOJLocale::get('leave it blank if you do not want to change the password') ?></span>
 		</div>
 	</div>
+	<div id="div-realname" class="form-group">
+		<label for="input-realname" class="col-sm-2 control-label">真实姓名</label>
+		<div class="col-sm-3">
+			<input type="text" class="form-control" name="realname" id="input-realname" value="<?=$myUser['realname']?>" placeholder="输入真实姓名" maxlength="50" />
+			<span class="help-block" id="help-realname"></span>
+		</div>
+	</div>
 	<div id="div-email" class="form-group">
 		<label for="input-email" class="col-sm-2 control-label"><?= UOJLocale::get('email') ?></label>
 		<div class="col-sm-3">
@@ -134,6 +149,9 @@
 		var ok = true;
 		ok &= getFormErrorAndShowHelp('email', validateEmail);
 		ok &= getFormErrorAndShowHelp('old_password', validatePassword);
+		if ($('#input-realname').val().length > 0) {
+			ok &= getFormErrorAndShowHelp('realname', validateRealname);
+		}
 
 		if ($('#input-password').val().length > 0)
 			ok &= getFormErrorAndShowHelp('password', validateSettingPassword);
@@ -150,12 +168,14 @@
 			etag     : $('#input-email').val().length,
 			ptag     : $('#input-password').val().length,
 			Qtag     : $('#input-qq').val().length,
+			rtag     : $('#input-realname').val().length,
 			email    : $('#input-email').val(),
 			password : md5($('#input-password').val(), "<?= getPasswordClientSalt() ?>"),
 			old_password : md5($('#input-old_password').val(), "<?= getPasswordClientSalt() ?>"),
 			qq       : $('#input-qq').val(),
 			sex      : $('#input-sex').val(),
-			motto    : $('#input-motto').val()
+			motto    : $('#input-motto').val(),
+			realname : $('#input-realname').val()
 		}, function(msg) {
 			if (msg == 'ok') {
 				BootstrapDialog.show({

@@ -1,11 +1,14 @@
 <form method="post" class="form-horizontal" id="form-<?= $editor->name ?>" enctype="multipart/form-data">
 <?= HTML::hiddenToken() ?>
 <div class="row">
-	<div class="col-sm-6">
+	<div class="col-sm-4">
 		<?= HTML::div_vinput("{$editor->name}_title", 'text', $editor->label_text['title'], html_entity_decode($editor->cur_data['title'])) ?>
 	</div>
-	<div class="col-sm-6">
+	<div class="col-sm-4">
 		<?= HTML::div_vinput("{$editor->name}_tags", 'text', $editor->label_text['tags'], join(', ', $editor->cur_data['tags'])) ?>
+	</div>
+	<div class="col-sm-4">
+		<?= HTML::div_vinput("{$editor->name}_sol", 'text', $editor->label_text['sol'], $editor->cur_data['sol'] == 0 ? null : $editor->cur_data['sol']) ?>
 	</div>
 </div>
 <?= HTML::div_vtextarea("{$editor->name}_content_md", $editor->label_text['content'], $editor->cur_data['content_md']) ?>

@@ -32,6 +32,7 @@
 
 <div class="row">
 	<div class="col-md-3">
+		<img class="media-object img-thumbnail center-block" alt="<?= UOJContext::user()['username'] ?> Avatar" src="<?= HTML::avatar_addr(UOJContext::user(), 256) ?>" />
 		<?php if (UOJContext::hasBlogPermission()): ?>
 		<div class="btn-group btn-group-justified">
 			<a href="<?=HTML::blog_url(UOJContext::userid(), '/blog/new/write')?>" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> 写新博客</a>
@@ -43,7 +44,7 @@
 			<div class="panel-body">
 			<?php if ($all_tags): ?>
 			<?php foreach ($all_tags as $tag): ?>
-				<?php echoBlogTag($tag['tag']) ?>
+				<?php echoBlogTag($tag['tag'], UOJContext::user()['username']) ?>
 			<?php endforeach ?>
 			<?php else: ?>
 				<div class="text-muted">暂无</div>

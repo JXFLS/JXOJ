@@ -1,4 +1,9 @@
 <?php
+
+	if ($myUser == null) {
+		header("Location: /login");
+		die();
+	}
 	$conds = array();
 	
 	$q_problem_id = isset($_GET['problem_id']) && validateUInt($_GET['problem_id']) ? $_GET['problem_id'] : null;

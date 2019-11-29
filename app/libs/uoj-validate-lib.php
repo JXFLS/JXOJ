@@ -20,6 +20,10 @@ function validateMotto($motto) {
 	return is_string($motto) && ($len = mb_strlen($motto, 'UTF-8')) !== false && $len <= 50;
 }
 
+function validateRealname($realname) {
+	return is_string($realname) && ($len = mb_strlen($realname, 'UTF-8')) !== false;
+}
+
 function validateUInt($x) { // [0, 1000000000)
 	if (!is_string($x)) {
 		return false;

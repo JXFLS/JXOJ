@@ -62,6 +62,9 @@ Route::group([
 		Route::any('/click-zan', '/click_zan.php');
 
 		Route::any('/problem/{id}/sol', '/sol.php');
+		Route::any('/contest/{contest_id}/problem/{id}/sol', '/sol.php');
+
+		Route::any('/csp', '/csp.php');
 	}
 );
 

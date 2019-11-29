@@ -152,7 +152,7 @@ EOD;
                     &nbsp;|&nbsp;
                     <a href="https://www.cnblogs.com/terrasse" target="_blank">Terrasse</a>
                     &nbsp;|&nbsp;
-                    <a href="https://www.cnblogs.com/pelom" target="_blank">Pelom</a>
+                    <a href="https://pelom.top" target="_blank">Pelom</a>
                     &nbsp;|&nbsp;
                     <a href="https://www.cnblogs.com/ofnoname" target="_blank">Ofnoname</a>
                     <br>
@@ -179,3 +179,25 @@ EOD;
       }
     });
 </script>
+
+<?php
+	global $myUser;
+	if (Auth::check() && !$myUser['realname'] && !isSuperUser($myUser)):
+	?>
+	<script>
+	BootstrapDialog.show({
+		title   : '您尚未设置真实姓名',
+		message : '请前往用户设置进行设置',
+		type    : BootstrapDialog.TYPE_DANGER,
+		buttons : [{
+			label: '好的',
+			action: function(dialog) {
+				window.location.href = '/user/modify-profile';
+			}
+		}],
+		onhidden : function(dialog) {
+			dialog.close();
+		}
+	});
+	</script>
+<?php endif;?>

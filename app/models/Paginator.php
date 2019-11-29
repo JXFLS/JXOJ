@@ -22,7 +22,13 @@ class Paginator {
 			
 			$this->n_pages = max((int)ceil($this->n_rows / $this->page_len), 1);
 
-			$this->cur_page = validateUInt($_GET['page']) ? (int)$_GET['page'] : 1;
+			if ($config['is_problem_set']) {
+				$this->cur_page = validateUInt($_GET['page']) ? (int)$_GET['page'] : $this->n_pages;
+			}
+			else {
+				$this->cur_page = validateUInt($_GET['page']) ? (int)$_GET['page'] : 1;
+			}
+			
 			if ($this->cur_page < 1) {
 				$this->cur_page = 1;
 			} else if ($this->cur_page > $this->n_pages) {
@@ -47,8 +53,8 @@ class Paginator {
 		parse_str($query_string, $param);
 		
 		$param['page'] = $page;
-		if ($page == 1)
-			unset($param['page']);
+		//if ($page == 1)
+		//	unset($param['page']);
 		
 		if ($param) {
 			return $path . '?' . http_build_query($param);

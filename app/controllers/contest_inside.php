@@ -1,5 +1,10 @@
 <?php
 	requirePHPLib('form');
+
+	if ($myUser == null && $_GET['passwd']!='jxwzxakioi') { //for Anti-Cheating
+		header("Location: /login");
+		die();
+	}
 	
 	if (!validateUInt($_GET['id']) || !($contest = queryContest($_GET['id']))) {
 		become404Page();
@@ -19,6 +24,9 @@
 				header("Location: /contest/{$contest['id']}/register");
 				die();
 			}
+		} elseif (!hasRegistered($myUser, $contest)) {
+			header("Location: /contest/{$contest['id']}/register");
+			die();
 		}
 	}
 	
@@ -468,7 +476,7 @@ EOD;
 <?php echoUOJPageHeader(HTML::stripTags($contest['name']) . ' - ' . $tabs_info[$cur_tab]['name'] . ' - ' . UOJLocale::get('contests::contest')) ?>
 <div class="text-center">
 	<h1><?= $contest['name'] ?></h1>
-	<?= getClickZanBlock('C', $contest['id'], $contest['zan']) ?>
+	<!--<?= getClickZanBlock('C', $contest['id'], $contest['zan']) ?>-->
 </div>
 <div class="row">
 	<?php if ($cur_tab == 'standings'): ?>
@@ -555,4 +563,25 @@ EOD;
 		<?php } ?>
 	</div>
 </div>
+<?php
+	global $myUser;
+	if (Auth::check() && !$myUser['realname'] && !isSuperUser($myUser)):
+	?>
+	<script>
+	BootstrapDialog.show({
+		title   : '您尚未设置真实姓名',
+		message : '请前往用户设置进行设置',
+		type    : BootstrapDialog.TYPE_DANGER,
+		buttons : [{
+			label: '好的',
+			action: function(dialog) {
+				window.location.href = '/user/modify-profile';
+			}
+		}],
+		onhidden : function(dialog) {
+			dialog.close();
+		}
+	});
+	</script>
+<?php endif;?>
 <?php echoUOJPageFooter() ?>
